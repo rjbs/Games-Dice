@@ -1,7 +1,17 @@
+use strict;
+use warnings;
 use ExtUtils::MakeMaker;
-# See lib/ExtUtils/MakeMaker.pm for details of how to influence
-# the contents of the Makefile that is written.
+
 WriteMakefile(
-    'NAME'	=> 'Games::Dice',
-    'VERSION_FROM' => 'Dice.pm', # finds $VERSION
+  NAME          => 'Games::Dice',
+  AUTHOR        => 'Ricardo SIGNES <rjbs@cpan.org>',
+  VERSION_FROM  => 'lib/Games/Dice.pm',
+  ABSTRACT_FROM => 'lib/Games/Dice.pm',
+  PL_FILES      => {},
+  PREREQ_PM => {
+    'Class::Container' => 0,
+    'Test::More'       => 0,
+  },
+  dist          => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
+  clean         => { FILES => 'Games-Dice-* cover_db' },
 );

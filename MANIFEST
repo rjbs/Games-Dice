@@ -1,5 +1,15 @@
 Changes
-Dice.pm
-MANIFEST
+lib/Games/Die.pm
+lib/Games/Dice.pm
+lib/Games/Dice/Result.pm
 Makefile.PL
-t/1.t
+MANIFEST			This list of files
+README
+t/00_load.t
+t/dice.t
+t/die.t
+t/pod-coverage.t
+t/pod.t
+t/bottom_x.t
+t/weighted.t
+META.yml                                 Module meta-data (added by MakeMaker)

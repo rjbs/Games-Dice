@@ -1,0 +1,12 @@
+# http://module-build.sourceforge.net/META-spec.html
+#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
+name:         Games-Dice
+version:      0.99_01
+version_from: lib/Games/Dice.pm
+installdirs:  site
+requires:
+    Class::Container:              0
+    Test::More:                    0
+
+distribution_type: module
+generated_by: ExtUtils::MakeMaker version 6.17

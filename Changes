@@ -1,8 +1,39 @@
-Revision history for Perl extension Games::Dice.
+Revision history for Games-Die
 
-0.02  2002-02-20
-        * Added licence
+0.07_01  2004-09-18
+         beginning of result class
 
-0.01  Mon Apr 19 10:15:58 1999
-	- original version; created by h2xs 1.18
+0.06
+
+0.05
+         minor bug in adjust behavior
+				 Push adjust value onto roll() return list only if adjust is non-zero,
+				 instead of always pushing it as before (Ricardo)
+
+0.04
+         fixed minus-one bug, added +/- modfifiers
+
+				 Fixed bug where a die would never roll its maximum value.  I
+				 introduced this in 0.03 somehow and never caught it.  I thought I had
+				 a grasp on basic arithmetic by now...
+
+				 Added Ricardo Signes' +/-N adjustment to "d" style specifier (e.e.
+				 2d8+1)
+
+0.03
+         fixed random number generation
+				 Wrote Die::roll the right way so there is no longer a limit to the
+				 number of sides (thanks to Thomas R. Sibley).  I am dumb.  :)
+
+0.02
+         added D&D dice specification, Dice::roll, documentation
+         Increased die side limit from 100 to 10000 and documented the limit
+         Added documentation for Games::Die::Dice
+				 Games::Die::Dice now supports "D&D style" die descriptors in its
+				 constructor (such as "2d8" or "6d20")
+				 Games::Die::Dice::roll now returns the sum of the roll in scalar
+				 context, as one would expect!
+
+0.01
+         initial release
 
