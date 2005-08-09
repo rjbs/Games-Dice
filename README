@@ -1,0 +1,4 @@
+README for Games-Die
+
+This module simulates rolling a die.  Also included is Games::Die::Dice which
+provides a set of dice that may be rolled together.
