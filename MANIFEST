@@ -14,3 +14,4 @@ t/pod-coverage.t
 t/pod.t
 t/weighted.t
 META.yml                                 Module meta-data (added by MakeMaker)
+t/perl-critic.t
