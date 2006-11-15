@@ -13,7 +13,7 @@ Games::Dice::Result - what you get when you roll some dice
 
 version 0.99_01
 
- $Id: Result.pm,v 1.1 2004/10/19 03:52:28 rjbs Exp $
+ $Id$
 
 =cut
 

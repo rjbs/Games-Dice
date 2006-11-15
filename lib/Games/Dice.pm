@@ -22,7 +22,7 @@ Games::Dice - a set of dice for rolling
 
 version 0.99_01
 
- $Id: Dice.pm,v 1.6 2004/10/19 12:52:29 rjbs Exp $
+ $Id$
 
 =head1 SYNOPSIS
 

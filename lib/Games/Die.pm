@@ -18,7 +18,7 @@ Games::Die - it's a die; you can roll it!
 
 version 0.99_01
 
- $Id: Die.pm,v 1.5 2004/10/19 03:52:28 rjbs Exp $
+ $Id$
 
 =head1 SYNOPSIS
 
