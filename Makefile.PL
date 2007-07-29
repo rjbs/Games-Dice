@@ -10,8 +10,8 @@ WriteMakefile(
   LICENSE       => 'perl',
   PL_FILES      => {},
   PREREQ_PM => {
-    'Class::Container' => 0,
-    'Test::More'       => 0,
+    'Sub::Exporter' => 0.000, # minimum unknown
+    'Test::More'    => 0,
   },
   dist          => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
   clean         => { FILES => 'Games-Dice-* cover_db' },
