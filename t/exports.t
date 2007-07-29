@@ -1,22 +1,14 @@
-use Test::More tests => 1001;
+use Test::More tests => 501;
 
 use strict;
 use warnings;
 
-BEGIN { use_ok('Games::Dice', qw(roll roll_array)); }
+BEGIN { use_ok('Games::Dice', qw(roll)); }
 
 {
   my @sides = (20) x 6;
 	SKIP: for my $i (1 .. 500) {
 		my @roll = roll('6d20');
-		skip "one broke", (500 - $i) unless roll_ok(\@roll, \@sides);
-	}
-}
-
-{
-  my @sides = (20) x 6;
-	SKIP: for my $i (1 .. 500) {
-		my @roll = roll_array('6d20');
 		skip "one broke", (500 - $i) unless roll_ok(\@roll, \@sides);
 	}
 }
