@@ -7,6 +7,7 @@ WriteMakefile(
   AUTHOR        => 'Ricardo SIGNES <rjbs@cpan.org>',
   VERSION_FROM  => 'lib/Games/Dice.pm',
   ABSTRACT_FROM => 'lib/Games/Dice.pm',
+  LICENSE       => 'perl',
   PL_FILES      => {},
   PREREQ_PM => {
     'Class::Container' => 0,

@@ -1,5 +1,6 @@
 Changes
 lib/Games/Die.pm
+lib/Games/Die/Result.pm
 lib/Games/Dice.pm
 lib/Games/Dice/Result.pm
 Makefile.PL
@@ -8,8 +9,10 @@ README
 t/00_load.t
 t/dice.t
 t/die.t
+t/exports.t
 t/pod-coverage.t
 t/pod.t
-t/bottom_x.t
 t/weighted.t
+t/perl-critic.t
+LICENSE
 META.yml                                 Module meta-data (added by MakeMaker)

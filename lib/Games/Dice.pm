@@ -1,17 +1,30 @@
-package Games::Dice;
-use base qw(Class::Container);
-use Params::Validate qw(:types);
-
 use strict;
 use warnings;
+
+package Games::Dice;
 
 use Games::Die;
 use Games::Dice::Result; 
 
-use Carp;
+use Carp ();
 
-use vars qw($VERSION);
-$VERSION = '0.99_01';
+$Games::Dice::VERSION = '0.999_01';
+
+use Sub::Exporter -setup => {
+  exports => { roll => \'_build_roll' },
+};
+
+sub _build_roll {
+  my ($class, $name) = @_;
+  sub {
+    my $result = $class->roll(@_);
+    if (wantarray) {
+      return map { $_->value } $result->results;
+    } else {
+      return $result->total;
+    }
+  };
+}
 
 =head1 NAME
 
@@ -19,132 +32,163 @@ Games::Dice - a set of dice for rolling
 
 =head1 VERSION
 
-version 0.99_01
+version 0.099_01
 
- $Id: Dice.pm,v 1.6 2004/10/19 12:52:29 rjbs Exp $
+ $Id: Dice.pm 1501 2007-07-29 19:50:56Z rjbs $
 
 =head1 SYNOPSIS
 
-  my $hit_points = Games::Dice->new('2d8');
+  my $die_pool = Games::Dice->new('2d8');
 
-  my $result = $hit_points->roll;
+  my $hit_points = $die_pool->roll->total;
 
-  my $damage_dice = Games::Dice->new(dice => [6,6], adjust => +2);
+  my $damage_dice = Games::Dice->new('2d6+2');
+  
+  my $result = Games::Dice->roll(
+    [
+      Games::Die->new({ sides => 6 }),
+      6,
+      Games::Die::Weighted->new({ sides => 6 }),
+    ],
+    {
+      drop_bottom => 1
+    },
+  );
+
+  print "You rolled: ", $result->as_string, "\n";
 
 =head1 DESCRIPTION
 
 A Games::Dice object represents a set of dice, which are represented by
-Games::Dice objects.  A set of dice can be rolled, and returns a
+Games::Die objects.  A set of dice can be rolled, and returns a
 Games::Dice::Results object.  The default behavior of dice and dice sets is
 simple, but can easily be augmented with subclassing.
 
 =head1 METHODS
 
-=head2 C<< Games::Dice->new(dice => $dice, adjust => $adjust) >>
+=head2 new
+
+  my $dice = Games::Dice->new($dice, \%arg);
 
 This method creates and returns a new set of dice.
 
-The C<dice> parameter is an arrayref of dice or dice sides that make up the
-set.  The dice may be numbers or objects that provide a C<roll> method.
-Alternately, C<dice> may be a string describing the dice set (see below).
+The simplest kind of value for C<$dice> is a string describing the dice in the
+usual RPG format: C<XdY+Z>
 
-The C<adjust> parameter may be either a number to add to the rolled total or a
-coderef that is called on the total.  The result of that call is then returned
-as the total.  In other words, the following two calls are functionally
-equivalent:
+I<X>, the number of dice, is optional.  I<Y>, the sides on each die, is
+mandatory, and must be a positive integer, or the percent sign, which stands in
+for 100.  I<+Z>, the modifier, is optional, and may be a positive or negative
+integer.
 
-  Games::Dice->new(dice => [ 10, 10 ], adjust => -1);
-  Games::Dice->new(dice => [ 10, 10 ], adjust => sub { $_[0] - 1 });
+Instead of a string, you can provide an arrayref of individual dice.  Each
+entry in the arrayref must be an integer (in which case it's used to create a
+new Games::Die object with that many sides) or a Games::Die object.
 
-These two parameters can be combined in a traditional dice specification and
-passed as the C<dice> parameter, as a string.
+Valid arguments (to pass in C<%arg>) are:
 
-  Games::Dice->new(dice => "3d6");   # same as: dice => [ 6, 6, 6 ]
-  Games::Dice->new(dice => "2d4+1"); # same as: dice => [ 4, 4 ], adjust => 1
-  Games::Dice->new(dice => "d8*2");  # same as: dice => [ 8 ],
-                                                adjust => sub { $_[0] * 2 }
-  
+=over
 
-If the only parameter you pass to C<new> is C<dice>, you can omit the name.
+=item adjust
 
-  my $dexterity = Games::Dice->new("3d6+1")->roll;
+This parameter may be either a number to add to the rolled total or a coderef
+that is called on the total.  The result of that call is then returned as the
+total.  In other words, the following two calls are functionally equivalent:
 
-C<die_class> and C<result_class> parameters may be passed to Games::Dice to
-change the class that will be used to create individual dice or the result set.
-Any parameters intended for those constructors will be passed along.  (See
-L<Class::Container> for more information.)
+  Games::Dice->new('2d10', { adjust => -1 });
+  Games::Dice->new('2d10', { adjust => sub { $_[0] - 1 } });
+
+In a case like the following, the net result is an adjust of +2:
+
+  Games::Dice->new("3d6+1", { adjust => 1 });
+
+=item drop_bottom
+
+=item drop_top
+
+These parameters indicate that the higher and lowest I<n> values should not be
+considered toward the total and should not be returned in the normal set of
+results.  (See the C<L</results>> method, below.)
+
+In other words, this set of dice rolls four six-sided dice, then drops the
+lowest value:
+
+  my $dark_sun_dice = Games::Dice->new("4d6", { drop_bottom => 1 });
+
+=back
 
 =cut
 
-__PACKAGE__->valid_params(
-  spec   => { type => SCALAR,   optional => 1 },
-  dice   => { type => ARRAYREF, optional => 1 },
-);
-
-__PACKAGE__->contained_objects(
-  die    => { class => 'Games::Die',          delayed => 1 },
-  result => { class => 'Games::Dice::Result', delayed => 1 },
-);
-
-my $dice_spec_re = qr/\A
-                      (\d+)?        # a number
-                      d(%|\d+)      # of x-sided dice (% for 100)
-                      (?:([-+\/*])  # followed by an operator
-                         (\d+)      # ...and number
-                      )?            # ...maybe
-                      \Z
-                     /ix;
+my $dice_spec_re = qr/
+  \A
+  (\d+)?     # a number
+  d(%|\d+)   # of x-sided dice (% for 100)
+  ([-+]\d+)? # posibly followed by +n or -n
+  \z
+/x;
 
 sub _expand_spec {
-  my ($spec) = @_;
+  my ($self, $spec) = @_;
 
-  if (my ($dice, $sides, $op, $adjust) = $spec =~ $dice_spec_re) {
+  if (my ($count, $sides, $adjust) = $spec =~ $dice_spec_re) {
     $sides = 100 if $sides eq '%';
-    $op ||= '+';
 
-    my %param;
-    $param{dice} = [ ($sides) x ($dice || 1) ];
+    Carp::croak "can't create a zero-die set" if $count == 0;
 
-    croak "can't divide result by zero" if $op eq '/' and $adjust == 0;
-
-       if ($op eq '+') { $param{adjust} = + $adjust }
-    elsif ($op eq '-') { $param{adjust} = - $adjust }
-    elsif ($op eq '*') { $param{adjust} = sub {      $_[0] * $adjust  } }
-    elsif ($op eq '/') { $param{adjust} = sub { int( $_[0] / $adjust) } }
-    else               { $param{adjust} = undef }
-
-    return %param;
+    return ($count, $sides, $adjust);
   }
   
-  croak "invalid specification";
+  Carp::croak "invalid specification $spec";
 }
 
 sub new {
-  my $class = shift;
+  my ($class, $dice, $arg) = @_;
+  $arg ||= {};
 
-  unshift @_, "spec" if @_ == 1;
+  my $self = bless {} => $class;
 
-  my $self = $class->SUPER::new(@_);
+  if (not ref $dice) {
+    my ($count, $sides, $adjust) = $self->_expand_spec($dice);
 
-  if ($self->{spec}) {
-    my %spec = _expand_spec($self->{spec});
-    $self->{$_} = $spec{$_} for qw(dice adjust);
-  }
+    $dice = [ ($sides) x $count ];
 
-  return unless @{$self->{dice}};
-
-  for (@{ $self->{dice} }) {
-    if (ref $_) {
-      next if $_->can('roll');
-      croak "invalid object in dice list: " . ref $_;
+    if ($adjust) {
+      if (not $arg->{adjust}) {
+        $arg->{adjust} = $adjust;
+      } elsif (not ref $arg->{adjust}) {
+        $arg->{adjust} += $adjust;
+      } else {
+        my $existing = $arg->{adjust};
+        $arg->{adjust} = sub { $existing->($_[0] + $adjust) };
+      }
     }
-    $_ = $self->create_delayed_object(die => (sides => $_));
   }
+
+  # There's nothing wrong with one die object being given in multiple slots in
+  # the dice arrayref, so we'll use %basic_for to maximize doing that.  --
+  # rjbs, 2007-07-29
+  my %basic_for;
+  my @dice;
+  for (@$dice) {
+    $_ = ($basic_for{$_} ||= $self->die_class->new($_)) unless ref;
+    Carp::croak "invalid object in dice: $_" unless $_->isa($self->die_class);
+    push @dice, $_;
+  }
+
+  Carp::croak "a dice set must have at least one die" unless @dice;
+
+  $self->{dice}   = \@dice;
+  $self->{adjust} = $arg->{adjust};
+
+  # XXX: Validate! -- rjbs, 2007-07-29
+  $self->{drop_top}    = $arg->{drop_top} || 0;
+  $self->{drop_bottom} = $arg->{drop_bottom} || 0;
   
   return $self;
 }
 
-=head2 C<< $dice->dice() >>
+=head2 dice
+
+  my @dice = $dice->dice;
 
 This returns a list of the die objects in the set.
 
@@ -152,51 +196,55 @@ This returns a list of the die objects in the set.
 
 sub dice {
   my ($self) = @_;
-  @{$self->{dice}};
+  @{ $self->{dice} };
 }
 
 
-=head2 C<< $dice->roll_result() >>
+=head2 roll
+
+  my $result = $dice->roll;
+  my $result = Games::Dice->roll(@args_for_new);
 
 This method rolls the dice and returns a Result object.
-
-=cut
-
-sub roll_result {
-  my ($self) = @_;
-
-  $self->{last_result} = $self->create_delayed_object(result =>
-    rolls  => [ map { $_->roll } $self->dice ],
-    adjust => $self->{adjust}
-  );
-}
-
-=head2 C<< $dice->roll() >>
-
-This method rolls the dice and returns the value of the result.  Generally, in
-scalar context, this returns the sum, in list context, returns the list of
-values that came up on each die.  (Other result classes may change the behavior
-of the C<value> method.)
 
 =cut
 
 sub roll {
   my ($self) = @_;
 
-  $self->roll_result->value;
+  if (not ref $self) {
+    Carp::croak "roll as a class method requires arguments" unless @_ > 1;
+    $self = shift->new(@_);
+  }
+
+  my @results = sort { $a->value <=> $b->value } map { $_->roll } $self->dice;
+  my @dropped;
+
+  push @dropped, splice @results, 0, $self->{drop_bottom};
+  push @dropped, splice @results, -$self->{drop_top}, $self->{drop_top};
+
+  $self->result_class->new({
+    results => \@results,
+    dropped => \@dropped,
+    adjust  => $self->{adjust},
+  });
 }
 
-=head2 C<< $dice->result() >>
+=head2 die_class
 
-This method returns the last result of rolling the dice.  (This method doesn't
-roll the dice, so you'll need to call C<roll> first.)
+This method returns the class to be used for die objects.
 
 =cut
 
-sub result {
-  my ($self) = @_;
-  $self->{last_result};
-}
+sub die_class { 'Games::Die' }
+
+=head2 result_class
+
+This method returns the class to be used for results.
+
+=cut
+
+sub result_class { 'Games::Dice::Result' }
 
 =head1 TODO
 
@@ -220,8 +268,8 @@ Ricardo SIGNES <C<rjbs@cpan.org>>
 
 =head1 HISTORY
 
-Games::Dice was originally uploaded by Philip Newton (pne@cpan.org) in 1999 and provided
-a simple function-based interface to die rolling.
+Games::Dice was originally uploaded by Philip Newton (pne@cpan.org) in 1999 and
+provided a simple function-based interface to die rolling.
 
 Andrew Burke (burke@bitflood.org) and Jeremy Muhlich (jmuhlich@bitflood.org)
 uploaded Games::Die::Dice in 2002, which provided a simple object-oriented
@@ -231,7 +279,8 @@ Ricardo SIGNES (rjbs@cpan.org) took maintainership of Games::Die::Dice in 2004,
 and really did mean to get around to overhauling it.  In 2005 he got a round
 tuit and rewrote the code to be more flexible and extensible for all the silly
 things he wanted to do.  He also took maintainership of Games::Dice, and merged
-the two distributions.
+the two distributions.  In 2007, he really, really overhauled it again, getting
+rid of the insane things he had done in a long-standing developer-only release.
 
 =head1 LICENSE
 

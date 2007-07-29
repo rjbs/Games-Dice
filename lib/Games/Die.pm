@@ -1,14 +1,12 @@
-package Games::Die;
-use base qw(Class::Container);
-use Params::Validate qw(:types);
-
 use strict;
 use warnings;
 
-use Carp;
+package Games::Die;
 
-use vars qw($VERSION);
-$VERSION = '0.99_01';
+$Games::Die::VERSION = '0.999_01';
+
+use Carp ();
+use Games::Die::Result;
 
 =head1 NAME
 
@@ -16,57 +14,51 @@ Games::Die - it's a die; you can roll it!
 
 =head1 VERSION
 
-version 0.99_01
+version 0.999_01
 
- $Id: Die.pm,v 1.5 2004/10/19 03:52:28 rjbs Exp $
+ $Id: Die.pm 1501 2007-07-29 19:50:56Z rjbs $
 
 =head1 SYNOPSIS
 
-	$six_sided = Games::Die->new(sides => 6);
+	$six_sided = Games::Die->new({ sides => 6 });
 
 	$twenty_sided = Games::Die->new(20);
 	$twenty_sided->sides; # 20
 
-	$total = $six_sided->roll() + $twenty_sided->roll();
+	$total = $six_sided->roll + $twenty_sided->roll;
 
 =head1 DESCRIPTION
 
-Games::Die provides an object-oriented implementation of a polyhedral die that
-can be rolled.
-
-
+Games::Die provides an object-oriented implementation of a die that can be
+rolled.
 
 =head1 METHODS
 
-=cut
+=head2 new
 
-=head2 C<< new(sides => $sides) >>
+  my $die = Games::Die->new(\%arg);
+  my $die = Games::Die->new($sides);
 
 This method creates and returns a new Die.	The number of sides must be an
-integer greater than zero.  If you only need to pass C<sides>, you can omit the
-name, as follows:
-
- my $d6 = Games::Die->new(6);
+integer greater than zero.  Passing C<$sides> as the first argument is
+equivalent to giving that value as the C<sides> argument, and nothing else.
 
 Other parameters will probably appear only in subclasses of Games::Die.
 
 =cut
 
-__PACKAGE__->valid_params(
-  sides => { type  => SCALAR,
-             regex => qr/\A\d+\Z/,
-             callbacks => { 'greater than 0' => sub { no warnings; shift() > 0 } }
-           }
-);
-
 sub new {
-  my $class = shift;
-  unshift @_, "sides" if @_ == 1;
+  my ($class, $arg) = @_;
+  $arg = { sides => $arg } unless ref $arg;
+  my $sides = $arg->{sides};
 
-  $class->SUPER::new(@_);
+  Carp::croak "invalid sides argument: $sides"
+    unless $sides and $sides !~ /\D/ and $sides > 0;
+
+  bless { sides => $sides } => $class;
 }
 
-=head2 C<< $die->sides() >>
+=head2 sides
 
 This method returns the number of sides on this die.
 
@@ -74,25 +66,32 @@ This method returns the number of sides on this die.
 
 sub sides {
   my ($self) = @_;
-  croak "can't change sidedness of die" if @_ > 1;
   $self->{sides};
 }
 
-=head2 C<< $die->roll() >>
+=head2 roll
 
-Rolls the die and returns the number that came up.
+  my $result = $die->roll;
+
+This method rolls the die and returns a
+L<Games::Die::Result|Games::Die::Result> object.
 
 =cut
 
 sub roll {
-	my $self  = shift;
+	my ($self) = @_;
 
-	return int($self->sides * rand) + 1;
+	my $value = int($self->sides * rand) + 1;
+  $self->result_class->new($value);
 }
 
-=head1 TODO
+=head2 result_class
 
-see L<Games::Dice>
+This method returns the class to be used for results.
+
+=cut
+
+sub result_class { 'Games::Die::Result' }
 
 =head1 AUTHORS
 

@@ -1,44 +1,29 @@
-use Test::More tests => 13;
+use Test::More tests => 8;
 
 use strict;
 use warnings;
 
 BEGIN { use_ok('Games::Dice'); }
+BEGIN { use_ok('Games::Die'); }
 
-package Games::Die::Weighted;
-use base qw(Games::Die);
-
-  __PACKAGE__->valid_params(
-    %{ Games::Die->valid_params },
-    which_way => { regex => qr/\Ahigh|low\Z/, default => 'high' }
-  );
+BEGIN {
+  package Games::Die::AlwaysHighest;
+  our @ISA = qw(Games::Die);
+  use base qw(Games::Die);
 
   sub roll {
     my $self = shift;
-    return $self->{which_way} eq 'high' ? $self->sides : 0;
+    $self->result_class->new($self->sides);
   }
-
-package main;
-
-{
-  my $dice = Games::Dice->new(
-    die_class => 'Games::Die::Weighted',
-    dice      => [ 3, 6, 10 ],
-  );
-
-  isa_ok($dice, 'Games::Dice');
-
-  cmp_ok($dice->roll, '==', 19, "rolled a perfect 19") for (1..5);
 }
 
 {
   my $dice = Games::Dice->new(
-    die_class => 'Games::Die::Weighted',
-    dice      => [ 3, 6, 10 ],
-    which_way => 'low'
+    [ map { Games::Die::AlwaysHighest->new($_) } qw(3 6 10) ],
+    { drop_top => 1 },
   );
 
   isa_ok($dice, 'Games::Dice');
 
-  cmp_ok($dice->roll, '==',  0, "rolled a perfect 0") for (1..5);
+  cmp_ok($dice->roll, '==', 9, "rolled a perfect 9") for (1..5);
 }
