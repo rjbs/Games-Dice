@@ -8,7 +8,7 @@ use Games::Dice::Result;
 
 use Carp ();
 
-$Games::Dice::VERSION = '0.999_01';
+$Games::Dice::VERSION = '0.999_02';
 
 use Sub::Exporter -setup => {
   exports => { roll => \'_build_roll' },
@@ -32,7 +32,7 @@ Games::Dice - a set of dice for rolling
 
 =head1 VERSION
 
-version 0.099_01
+version 0.999_02
 
  $Id$
 
