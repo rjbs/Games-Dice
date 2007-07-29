@@ -2,3 +2,74 @@ README for Games-Die
 
 This module simulates rolling a die.  Also included is Games::Die::Dice which
 provides a set of dice that may be rolled together.
+
+Thoughts on the current design:
+
+  my $dice = Games::Dice->new('d6');
+  my $dice = Games::Dice->new('3d6');
+  my $dice = Games::Dice->new('1d8+1');
+
+  my $dice = Games::Dice->new(
+    '4d6',
+    {
+      drop_bottom => 1, # and/or drop_bottom
+    },
+  );
+
+  my $die     = Games::Die->new({ sides => 6 });
+  my $bad_die = Games::Die::Weighted->new({
+    sides  => 6,
+    favors => 1,
+  });
+
+  my $dice = Games::Dice->new(
+    [
+      ($die) x 3,
+      $bad_die,
+    ],
+    {
+      drop_bottom => 1,
+    },
+  );
+
+  my $result = $dice->roll; # Games::Dice::Result object
+
+  my $result = Games::Dice->roll('3d6');
+
+  my $total  = $result->total;
+  my $string = $result->as_string;
+
+  my @results = $result->results;
+  my @results = $result->dropped_results;
+
+  for my $result (@results) { # Games::Die::Result object
+    say $result->as_string;
+    say $result->value;
+  }
+
+  #  Subclassing
+
+  my $dice = Games::Dice::ST->new(
+    6,
+    {
+      difficulty  => 7,
+      ones        => 'fail',
+      reroll_tens => 1,
+    },
+  );
+
+  if ($result->success) {
+    # ...
+  }
+
+  # Class method
+
+  my $result = Games::Dice::ST->roll(
+    6,
+    {
+      difficulty  => 7,
+      ones        => 'fail',
+      reroll_tens => 1,
+    }
+  );
+
