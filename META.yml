@@ -1,12 +1,12 @@
 --- #YAML:1.0
 name:                Games-Dice
-version:             0.999_01
+version:             0.999_02
 abstract:            a set of dice for rolling
 license:             perl
 generated_by:        ExtUtils::MakeMaker version 6.32
 distribution_type:   module
 requires:     
-    Class::Container:              0
+    Sub::Exporter:                 0
     Test::More:                    0
 meta-spec:
     url:     http://module-build.sourceforge.net/META-spec-v1.2.html
