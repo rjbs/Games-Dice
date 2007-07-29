@@ -169,8 +169,8 @@ sub new {
   my %basic_for;
   my @dice;
   for (@$dice) {
-    $_ = ($basic_for{$_} ||= Games::Die->new($_)) unless ref;
-    Carp::croak "invalid object in dice: $_" unless $_->isa('Games::Die');
+    $_ = ($basic_for{$_} ||= $self->die_class->new($_)) unless ref;
+    Carp::croak "invalid object in dice: $_" unless $_->isa($self->die_class);
     push @dice, $_;
   }
 
@@ -229,6 +229,20 @@ sub roll {
     adjust  => $self->{adjust},
   });
 }
+
+=head2 die_class
+
+This method returns the class to be used for die objects.
+
+=cut
+
+sub die_class { 'Games::Die' }
+
+=head2 result_class
+
+This method returns the class to be used for results.
+
+=cut
 
 sub result_class { 'Games::Dice::Result' }
 

@@ -85,6 +85,12 @@ sub roll {
   $self->result_class->new($value);
 }
 
+=head2 result_class
+
+This method returns the class to be used for results.
+
+=cut
+
 sub result_class { 'Games::Die::Result' }
 
 =head1 AUTHORS
