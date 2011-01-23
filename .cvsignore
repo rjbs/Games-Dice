@@ -1,8 +1,0 @@
-.cvsignore
-.lwpcookies
-.releaserc
-Makefile
-cover_db
-Games-Die-*
-blib
-pm_to_blib
