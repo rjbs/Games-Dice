@@ -1,6 +1,8 @@
 Revision history for Perl extension Games-Dice
 
 {{$NEXT}}
+
+0.03      2012-11-28 11:15:20 America/New_York
   - anchor the dice-parsing regex to stop treating roll("1d8+1d12") as
     roll("1d8+2")
 
