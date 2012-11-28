@@ -31,6 +31,8 @@ sub roll ($) {
                    ([-+xX*/bB]) # a + - * / b(est) in $2
                    (\d+)        # an offset in $3
                  )?             # both of those last are optional
+                 \s*            # possibly some trailing space (like \n)
+                 $
               }x;               # whitespace allowed
 
     $dice_string = $1;
