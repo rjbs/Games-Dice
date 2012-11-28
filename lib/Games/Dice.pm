@@ -1,19 +1,12 @@
-package Games::Dice;
-
 use strict;
-use vars qw($VERSION @ISA @EXPORT @EXPORT_OK);
+use warnings;
+package Games::Dice;
+# ABSTRACT: Perl module to simulate die rolls
 
 require Exporter;
 
-@ISA = qw(Exporter);
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-@EXPORT_OK = qw(
-	roll roll_array
-);
-$VERSION = '0.02';
-
+our @ISA = qw(Exporter);
+our @EXPORT_OK = qw( roll roll_array);
 
 # Preloaded methods go here.
 
@@ -98,14 +91,11 @@ sub roll_array ($) {
     return @throws;
 }
 
-
-
 1;
 __END__
 
 =head1 NAME
 
-Games::Dice - Perl module to simulate die rolls
 
 =head1 SYNOPSIS
 
@@ -154,51 +144,5 @@ by code!) to Games::Dice are welcome. So, using the above example, if
 anyone wishes to contribute a function along the lines of roll_feng_shui
 to become part of Games::Dice (or to support any other style of die
 rolling), you can contribute it to the author's address, listed below.
-
-=head1 AUTHOR
-
-Philip Newton, <pne@cpan.org>
-
-=head1 LICENCE
-
-Copyright (C) 1999, 2002 Philip Newton
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-
-=over 4
-
-=item *
-
-Redistributions of source code must retain the above copyright notice,
-this list of conditions and the following disclaimer. 
-
-=item *
-
-Redistributions in binary form must reproduce the above copyright notice,
-this list of conditions and the following disclaimer in the
-documentation and/or other materials provided with the distribution. 
-
-=back
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
-CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
-LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGE.
-
-=head1 SEE ALSO
-
-perl(1).
 
 =cut
