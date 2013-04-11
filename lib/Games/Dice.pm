@@ -131,13 +131,13 @@ the result to an int after dividing.) Using b in this slot is a little
 different: it's short for "best" and indicates "roll a number of dice,
 but add together only the best few". For example, 5d6b3 rolls five six-
 sided dice and adds together the three best rolls. This is sometimes
-used, for example, in roll-playing to give higher averages.
+used, for example, in role-playing to give higher averages.
 
 Generally, C<roll> probably provides the nicer interface, since it does
 the adding up itself. However, in some situations one may wish to
 process the individual rolls (for example, I am told that in the game
 Feng Shui, the number of dice to be rolled cannot be determined in
-advance but depends on whether any 6's were rolled); in such a case, one
+advance but depends on whether any 6s were rolled); in such a case, one
 can use C<roll_array> to return an array of values, which can then be
 examined or processed in an application-dependent manner.
 
