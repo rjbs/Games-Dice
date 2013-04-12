@@ -1,6 +1,7 @@
 Revision history for Perl extension Games-Dice
 
 {{$NEXT}}
+          documentation fixes (thanks, Mark Allen!)
 
 0.04      2013-04-10 10:41:18 America/New_York
           why do I need to release this?  last release was strangely deleted at
