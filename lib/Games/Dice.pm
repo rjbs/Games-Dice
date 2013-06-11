@@ -12,9 +12,7 @@ our @EXPORT_OK = qw( roll roll_array);
 
 # Win32 has crummy built in rand() support
 # So let's use something that's decent and pure perl
-if ( $^O eq "MSWin32" ) {
-    use Math::Random::MT::Perl qw(rand);
-}
+use if $^O eq "MSWin32", 'Math::Random::MT::Perl' => qw(rand);
 
 sub roll ($) {
     my($line, $dice_string, $sign, $offset, $sum, @throws, @result);
