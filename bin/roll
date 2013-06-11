@@ -53,6 +53,8 @@ __END__
 This is a command line interface to the L<Games::Dice> library. It takes
 die rolling specifications in the form of I<a>dI<b>[+-*/b]I<c>. 
 
+(This specification may change a bit over time, but not radically.)
+
 =over
 
 =item *
