@@ -2,6 +2,9 @@ Revision history for Perl extension Games-Dice
 
 {{$NEXT}}
 
+0.042     2013-08-27 12:11:09 America/New_York
+          update bug tracker, repo
+
 0.041     2013-06-11 19:12:11 America/New_York
           add the "roll" program (thanks, Mark Allen!)
 
