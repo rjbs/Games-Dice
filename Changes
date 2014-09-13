@@ -1,6 +1,7 @@
 Revision history for Perl extension Games-Dice
 
 {{$NEXT}}
+        - numbers now roll their own value; you can roll "3" and get 3
 
 0.043     2013-08-31 23:48:19 America/New_York
           update bug tracker, repo again

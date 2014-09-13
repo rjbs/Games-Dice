@@ -19,6 +19,8 @@ sub roll ($) {
 
     $line = shift;
 
+    return $line if $line =~ /\A[0-9]+\z/;
+
     return undef unless $line =~ m{
                  ^              # beginning of line
                  (              # dice string in $1
@@ -71,6 +73,8 @@ sub roll_array ($) {
     my($line, $num, $type, @throws);
 
     $line = shift;
+
+    return $line if $line =~ /\A[0-9]+\z/;
 
     return undef unless $line =~ m{
                  ^      # beginning of line
