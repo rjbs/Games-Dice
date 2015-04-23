@@ -30,6 +30,8 @@ sub roll ($) {
                       \d+       # either one or more digits
                     |           # or
                       %         # a percent sign for d% = d100
+                    |           # pr
+                      F         # a F for a fudge dice
                    )
                  )
                  (?:            # grouping-only parens
@@ -84,17 +86,25 @@ sub roll_array ($) {
                     \d+ # either one or more digits
                   |     # or
                     %   # a percent sign for d% = d100
+                  |     # pr
+                    F   # a F for a fudge dice
                  )
               }x;       # whitespace allowed
 
     $num    = $1 || 1;
     $type   = $2;
 
-    $type  = 100 if $type eq '%';
+    my $throw = sub { int (rand $_[0]) + 1 };
+
+    if ( $type eq '%' ) {
+        $type = 100;
+    } elsif ( $type eq 'F' ) {
+        $throw = sub { int( rand 3 ) - 1 };
+    }
 
     @throws = ();
     for( 1 .. $num ) {
-        push @throws, int (rand $type) + 1;
+        push @throws, $throw->($type);
     }
 
     return @throws;
@@ -127,8 +137,9 @@ familiar to players of popular role-playing games: I<a>dI<b>[+-*/b]I<c>.
 I<a> is optional and defaults to 1; it gives the number of dice to roll.
 I<b> indicates the number of sides to each die; the most common,
 cube-shaped die is thus a d6. % can be used instead of 100 for I<b>;
-hence, rolling 2d% and 2d100 is equivalent. C<roll> simulates I<a> rolls
-of I<b>-sided dice and adds together the results. The optional end,
+hence, rolling 2d% and 2d100 is equivalent. If F is used for I<b> fudge
+dice are used, which either results in -1, 0 or 1. C<roll> simulates I<a>
+rolls of I<b>-sided dice and adds together the results. The optional end,
 consisting of one of +-*/b and a number I<c>, can modify the sum of the
 individual dice. +-*/ are similar in that they take the sum of the rolls
 and add or subtract I<c>, or multiply or divide the sum by I<c>. (x can
