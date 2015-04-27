@@ -1,6 +1,7 @@
 Revision history for Perl extension Games-Dice
 
 {{$NEXT}}
+        - support Fudge/Fate dice, like 4dF (thanks, Mario Domgoergen!)
 
 0.044     2014-09-12 22:27:36-04:00 America/New_York
         - numbers now roll their own value; you can roll "3" and get 3
