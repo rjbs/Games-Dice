@@ -15,7 +15,7 @@ our @EXPORT_OK = qw( roll roll_array);
 # So let's use something that's decent and pure perl
 use if $^O eq "MSWin32", 'Math::Random::MT::Perl' => qw(rand);
 
-sub parse_spec {
+sub _parse_spec {
     my $line = shift;
     return undef unless $line =~ m{
                  ^                 # beginning of line
@@ -57,7 +57,7 @@ sub roll ($) {
 
     return $line if $line =~ /\A[0-9]+\z/;
 
-    my $pr = parse_spec($line);
+    my $pr = _parse_spec($line);
     return undef unless $pr;
 
     my @throws = _roll_dice($pr);
@@ -112,7 +112,7 @@ sub roll_array ($) {
 
     return $line if $line =~ /\A[0-9]+\z/;
 
-    my $pr = parse_spec($line);
+    my $pr = _parse_spec($line);
     return unless $pr;
 
     return _roll_dice($pr);
