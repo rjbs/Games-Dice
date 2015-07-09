@@ -1,6 +1,7 @@
 Revision history for Perl extension Games-Dice
 
 {{$NEXT}}
+        - internal refactoring (thanks, Mario Domgoergen!)
 
 0.045     2015-04-26 21:21:14-04:00 America/New_York
         - support Fudge/Fate dice, like 4dF (thanks, Mario Domgoergen!)
